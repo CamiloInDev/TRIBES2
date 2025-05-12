@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tribes | Moda Alternativa{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
+    <link rel="stylesheet" href="{% static 'css/productos.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'Home' %}" class="logo">TRIBES</a>
+            <div class="nav-links">
+                <a href="{% url 'colecciones' %}">Colecciones</a>
+                <a href="#hombre">Hombre</a>
+                <a href="#mujer">Mujer</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'ver_carrito' %}" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+    <div class="user-menu-container">
+        <a href="#" id="user-menu-toggle">Hola, {{ user.username }} <i class="fas fa-caret-down"></i></a>
+        <div id="user-menu" class="user-menu">
+            <a href="{% url 'editar_perfil' %}"><i class="fas fa-user-edit"></i> Editar perfil</a>
+            <a href="{% url 'ver_carrito' %}"><i class="fas fa-shopping-cart"></i> Ver carrito</a>
+            <a href="{% url 'cerrar_sesion' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+    </div>
+{% else %}
+    <a href="{% url 'inicio_sesion' %}">Iniciar Sesión</a>
+    <a href="{% url 'registro' %}">Registro</a>
+{% endif %}
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TRIBES</h3>
+                    <p>Moda alternativa para quienes rompen las reglas.</p>
+                </div>
+                
+                    
+                 
+                    
+                
+             <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TRIBES. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts comunes -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggle = document.getElementById('user-menu-toggle');
+            const menuContainer = document.querySelector('.user-menu-container');
+            if (toggle && menuContainer) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    menuContainer.classList.toggle('open');
+                });
+                document.addEventListener('click', function(e) {
+                    if (!menuContainer.contains(e.target)) {
+                        menuContainer.classList.remove('open');
+                    }
+                });
+            }
+        });
+        </script>
+</body>
+</html>

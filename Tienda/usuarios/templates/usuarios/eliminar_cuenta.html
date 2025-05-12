@@ -1,0 +1,14 @@
+{% extends 'tiendapp/base.html' %}
+{% block title %}Eliminar Cuenta | {{ block.super }}{% endblock %}
+{% block content %}
+<section class="delete-account">
+    <div class="container">
+        <h2>¿Estás seguro de que quieres eliminar tu cuenta?</h2>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sí, eliminar mi cuenta</button>
+            <a href="{% url 'editar_perfil' %}" class="btn">Cancelar</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

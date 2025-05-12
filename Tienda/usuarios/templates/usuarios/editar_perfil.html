@@ -1,0 +1,15 @@
+{% extends 'tiendapp/base.html' %}
+{% block title %}Editar Perfil | {{ block.super }}{% endblock %}
+{% block content %}
+<section class="profile-edit">
+    <div class="container">
+        <h2>Editar Perfil</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Guardar Cambios</button>
+        </form>
+        <a href="{% url 'eliminar_cuenta' %}" class="btn btn-danger">Eliminar mi cuenta</a>
+    </div>
+</section>
+{% endblock %}

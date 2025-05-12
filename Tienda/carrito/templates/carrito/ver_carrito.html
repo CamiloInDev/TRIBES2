@@ -1,0 +1,99 @@
+{% extends 'tiendapp/base.html' %}
+{% block title %}Carrito de Compras | {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="cart-section">
+    <div class="container">
+        <h2>Tu Carrito de Compras</h2>
+        
+        {% if carrito.items.all %}
+            <div class="cart-items">
+                <div class="cart-header">
+                    <div class="cart-col">Producto</div>
+                    <div class="cart-col">Precio</div>
+                    <div class="cart-col">Cantidad</div>
+                    <div class="cart-col">Subtotal</div>
+                    <div class="cart-col">Acciones</div>
+                </div>
+                
+                {% for item in carrito.items.all %}
+                <div class="cart-item">
+                    <div class="cart-col product-info">
+                        <img src="{{ item.producto.imagen.url|default:'https://via.placeholder.com/80' }}" alt="{{ item.producto.nombre }}">
+                        <div>
+                            <h3>{{ item.producto.nombre }}</h3>
+                            <p>{{ item.descripcion|truncatechars:50 }}</p>
+                        </div>
+                    </div>
+                    <div class="cart-col">{{ item.precio }} €</div>
+                    <div class="cart-col quantity">
+                        <form method="post" action="{% url 'actualizar_cantidad' item.id %}">
+                            {% csrf_token %}
+                            <button type="button" class="quantity-btn minus">-</button>
+                            <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" max="10">
+                            <button type="button" class="quantity-btn plus">+</button>
+                            <button type="submit" class="update-btn">Actualizar</button>
+                        </form>
+                    </div>
+                    <div class="cart-col">{{ item.subtotal }} €</div>
+                    <div class="cart-col">
+                        <a href="{% url 'eliminar_del_carrito' item.id %}" class="remove-btn"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Total:</span>
+                    <span class="cart-total">{{ carrito.total }} €</span>
+                </div>
+                <div class="cart-actions">
+                    <form method="post" action="{% url 'vaciar_carrito' %}" class="empty-cart-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Vaciar Carrito</button>
+                    </form>
+                    <a href="#" class="btn">Continuar Comprando</a>
+                    <a href="#" class="btn">Finalizar Compra</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart fa-4x"></i>
+                <p>Tu carrito está vacío</p>
+                <a href="{% url 'Home' %}" class="btn">Continuar Comprando</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Botones para aumentar/disminuir cantidad
+        const minusBtns = document.querySelectorAll('.quantity-btn.minus');
+        const plusBtns = document.querySelectorAll('.quantity-btn.plus');
+        
+        minusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentNode.querySelector('input');
+                const value = parseInt(input.value);
+                if (value > 1) {
+                    input.value = value - 1;
+                }
+            });
+        });
+        
+        plusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentNode.querySelector('input');
+                const value = parseInt(input.value);
+                if (value < 10) {
+                    input.value = value + 1;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

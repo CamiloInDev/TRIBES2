@@ -1,0 +1,77 @@
+{% extends 'tiendapp/base.html' %}
+{% block title %}{{ producto.nombre }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="container">
+        <div class="product-detail-container">
+            <div class="product-image">
+                <img src="{{ producto.imagen.url|default:'https://via.placeholder.com/500' }}" alt="{{ producto.nombre }}">
+            </div>
+            <div class="product-info">
+                <h1>{{ producto.nombre }}</h1>
+                <p class="product-price">{{ producto.precio }} €</p>
+                <div class="product-description">
+                    <h3>Descripción</h3>
+                    <p>{{ producto.descripcion }}</p>
+                </div>
+                
+                {% if producto.categoria %}
+                <div class="product-category">
+                    <span>Categoría:</span>
+                    <a href="{% url 'productos_por_categoria' producto.categoria.id %}">{{ producto.categoria.nombre }}</a>
+                </div>
+                {% endif %}
+                
+                {% if user.is_authenticated %}
+                <div class="product-actions">
+                    <form method="post" action="{% url 'agregar_al_carrito' producto.id %}" class="add-to-cart-form">
+                        {% csrf_token %}
+                        <div class="quantity-control">
+                            <label for="cantidad">Cantidad:</label>
+                            <button type="button" class="quantity-btn minus">-</button>
+                            <input type="number" name="cantidad" id="cantidad" value="1" min="1" max="10">
+                            <button type="button" class="quantity-btn plus">+</button>
+                        </div>
+                        <button type="submit" class="btn add-to-cart">
+                            <i class="fas fa-cart-plus"></i> Añadir al Carrito
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="login-prompt">
+                    <p>Para comprar este producto, por favor <a href="{% url 'inicio_sesion' %}">inicia sesión</a> o <a href="{% url 'registro' %}">regístrate</a>.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Botones para aumentar/disminuir cantidad
+        const minusBtn = document.querySelector('.quantity-btn.minus');
+        const plusBtn = document.querySelector('.quantity-btn.plus');
+        const quantityInput = document.querySelector('#cantidad');
+        
+        if (minusBtn && plusBtn && quantityInput) {
+            minusBtn.addEventListener('click', function() {
+                const value = parseInt(quantityInput.value);
+                if (value > 1) {
+                    quantityInput.value = value - 1;
+                }
+            });
+            
+            plusBtn.addEventListener('click', function() {
+                const value = parseInt(quantityInput.value);
+                if (value < 10) {
+                    quantityInput.value = value + 1;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

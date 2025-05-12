@@ -1,0 +1,21 @@
+# Ignorar directorios y archivos relacionados con Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entorno virtual
+venv/
+env/
+.venv/
+
+# Base de datos por defecto de Django
+db.sqlite3
+
+# Logs
+*.log
+local.py  # Si tienes un settings_local.py con configuraciones sensibles
+
+# Archivos del editor/IDE (opcional, según el que uses)
+.vscode/
+.idea/

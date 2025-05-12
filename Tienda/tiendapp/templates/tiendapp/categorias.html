@@ -1,0 +1,25 @@
+{% extends 'tiendapp/base.html' %}
+{% block title %}Categorías | {{ block.super }}{% endblock %}
+{% block content %}
+<section class="categories">
+    <div class="container">
+        <h2>Categorías</h2>
+        <div class="category-grid">
+    {% for categoria in categorias %}
+        <div class="category-card">
+            <a href="{% url 'productos_por_categoria' categoria.id %}">
+                {% if categoria.imagen %}
+                    <img src="{{ categoria.imagen.url }}" alt="{{ categoria.nombre }}" class="category-image">
+                {% else %}
+                    <img src="{% static 'images/product-placeholder.jpg' %}" alt="Sin imagen" class="category-image">
+                {% endif %}
+                <h3>{{ categoria.nombre }}</h3>
+            </a>
+        </div>
+    {% empty %}
+        <p>No hay categorías disponibles.</p>
+    {% endfor %}
+</div>
+    </div>
+</section>
+{% endblock %}

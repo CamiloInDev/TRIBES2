@@ -1,0 +1,33 @@
+[tool.ruff]
+
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # isort
+    "UP", # pyupgrade
+]
+
+# Ignorar algunas reglas
+ignore = [
+    "E501",
+    "F401",
+ ]
+
+
+target-version = "py39"
+
+
+line-length = 100
+
+
+fixable = ["I", "F", "E"]
+unfixable = []
+
+
+exclude = [
+    ".git",
+    ".ruff_cache",
+    "venv",
+    "__pycache__",
+    "migrations",
+]

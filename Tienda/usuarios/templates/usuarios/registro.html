@@ -1,0 +1,73 @@
+{% extends "tiendapp/base.html" %}
+
+{% block title %}Registro | Tribes{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Registro</h2>
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div class="form-group">
+                <label>Nombre de usuario</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label>Correo electrónico</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error-message">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-group">
+                <label>Teléfono</label>
+                {{ form.telefono }}
+                {% if form.telefono.errors %}
+                    <div class="error-message">{{ form.telefono.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Dirección -->
+            <div class="form-group">
+                <label>Dirección</label>
+                {{ form.direccion }}
+                {% if form.direccion.errors %}
+                    <div class="error-message">{{ form.direccion.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Contraseña -->
+            <div class="form-group">
+                <label>Contraseña</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="error-message">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div class="form-group">
+                <label>Confirmar contraseña</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="error-message">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-full">Registrarse</button>
+        </form>
+        <div class="auth-footer">
+            <p>¿Ya tienes una cuenta? <a href="{% url 'inicio_sesion' %}">Inicia sesión</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

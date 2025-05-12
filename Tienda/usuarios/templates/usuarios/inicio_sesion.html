@@ -1,0 +1,32 @@
+{% extends "tiendapp/base.html" %}
+
+{% block title %}Iniciar Sesión | Tribes{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Iniciar Sesión</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nombre de usuario</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-full">Iniciar Sesión</button>
+        </form>
+        <div class="auth-footer">
+            <p>¿No tienes una cuenta? <a href="{% url 'registro' %}">Regístrate</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+/* Estilos para las secciones de productos */
+.products-section, .category-products, .product-detail {
+    padding: 120px 0 60px;
+}
+
+.products-section h2, .category-products h2 {
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.products-section h2::after, .category-products h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--accent-color);
+}
+
+.category-description {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 30px;
+    opacity: 0.8;
+}
+
+/* Detalle de producto */
+.product-detail-container {
+    display: flex;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.product-detail .product-image {
+    flex: 1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.product-detail .product-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.product-detail .product-info {
+    flex: 1;
+    padding: 20px;
+}
+
+.product-detail h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 2rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.product-description {
+    margin: 20px 0;
+}
+
+.product-description h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.product-category {
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+.product-category a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.product-actions {
+    margin-top: 30px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.quantity-control label {
+    margin-right: 10px;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    background: #333;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.quantity-control input {
+    width: 50px;
+    padding: 5px;
+    text-align: center;
+    background: #222;
+    border: 1px solid #333;
+    color: var(--text-color);
+}
+
+.add-to-cart {
+    background: var(--accent-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-prompt {
+    margin-top: 30px;
+    padding: 15px;
+    background: #222;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.login-prompt a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-detail-container {
+        flex-direction: column;
+    }
+}

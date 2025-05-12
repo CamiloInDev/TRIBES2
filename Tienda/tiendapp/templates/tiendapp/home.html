@@ -1,0 +1,67 @@
+{% extends 'tiendapp/base.html'%}
+{% load static %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-slider swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="slide-bg" style="background-image: url('{% static 'images/slider-1.jpg' %}')"></div>
+            </div>
+            <div class="swiper-slide">
+                <div class="slide-bg" style="background-image: url('{% static 'images/slider-2.jpg' %}')"></div>
+            </div>
+            <div class="swiper-slide">
+                <div class="slide-bg" style="background-image: url('{% static 'images/slider-3.jpg' %}')"></div>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    
+    <div class="hero-content">
+        <h1>Rompe los <span>esquemas</span></h1>
+        <p>Ropa que desafía convenciones</p>
+        <a href="{% url 'colecciones' %}" class="btn">Explorar colección</a>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter">
+    <div class="container">
+        <h2>Únete a la tribu</h2>
+        <p>Recibe exclusivos descuentos y contenido alternativo</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="tucorreo@tribes.com">
+            <button type="submit" class="btn">Suscribirse</button>
+        </form>
+    </div>
+</section>
+
+
+
+<script>
+    
+
+    document.addEventListener('DOMContentLoaded', function() {
+        new Swiper('.hero-slider', {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            loop: true,
+            effect: 'fade',
+            speed: 100,
+            autoplay: {
+                delay: 900,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+    });
+
+    
+
+</script>
+
+
+{% endblock %}

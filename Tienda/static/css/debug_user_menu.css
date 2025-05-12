@@ -1,0 +1,17 @@
+/* DEBUG: Forzar menú de usuario visible y columna */
+#user-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 120% !important;
+    background: #222b !important;
+    border: 2px solid red !important;
+    min-width: 180px !important;
+    z-index: 9999 !important;
+}
+#user-menu a {
+    color: yellow !important;
+    background: #444 !important;
+    border-bottom: 1px solid #ff4655 !important;
+}
