@@ -19,3 +19,6 @@ local.py  # Si tienes un settings_local.py con configuraciones sensibles
 # Archivos del editor/IDE (opcional, según el que uses)
 .vscode/
 .idea/
+
+# Variables de entorno
+.env
