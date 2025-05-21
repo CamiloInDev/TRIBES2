@@ -83,12 +83,8 @@ WSGI_APPLICATION = 'mystore.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'usuarios',
-        'USER':'postgres',
-        'PASSWORD':'1488',
-        'HOST': 'localhost',
-        'PORT':'5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -129,7 +125,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static'
+    BASE_DIR / 'static',
+    "tribes2/TRIBES2/Tienda/TRIBES2/Tienda/static"
 ]
 
 
