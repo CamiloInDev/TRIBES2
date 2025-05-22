@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,12 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tiendapp',
-    'usuarios',
     'productos',
     'carrito',
 ]
 
-AUTH_USER_MODEL = 'overrideuser.CustomUser'
+AUTH_USER_MODEL = 'overrideuser.CustomUser' 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -127,11 +127,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# URL base para archivos estáticos
 STATIC_URL = '/static/'
+
+# Directorios donde Django buscará archivos estáticos adicionales
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-    "tribes2/TRIBES2/Tienda/TRIBES2/Tienda/static"
+    os.path.join(BASE_DIR.parent, 'static'),  # Apunta a la carpeta static en la raíz del proyecto
 ]
+
+# Directorio donde se recopilarán los archivos estáticos para producción
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Media files (Archivos subidos por usuarios)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 
@@ -139,3 +148,16 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Modelo de usuario personalizado
+AUTH_USER_MODEL = 'overrideuser.CustomUser'
+
+# URLs de autenticación
+LOGIN_URL = '/usuarios/inicio-sesion/'
+LOGIN_REDIRECT_URL = 'Home'
+LOGOUT_REDIRECT_URL = 'Home'
+
+# Backends de autenticación
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]

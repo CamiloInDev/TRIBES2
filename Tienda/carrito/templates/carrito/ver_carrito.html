@@ -1,71 +1,171 @@
 {% extends 'tiendapp/base.html' %}
 {% block title %}Carrito de Compras | {{ block.super }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Estilos directos para el carrito */
+    .main-content {
+        width: 100%;
+        display: block;
+    }
+    
+    .cart-section {
+        padding: 120px 0 60px;
+        min-height: 100vh;
+        width: 100%;
+    }
+    
+    .cart-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: block;
+    }
+    
+    .cart-section h2 {
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 2.5rem;
+        text-transform: uppercase;
+        position: relative;
+        color: var(--accent-color);
+        letter-spacing: 2px;
+    }
+    
+    .cart-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--accent-color);
+    }
+    
+    .cart-items {
+        margin-bottom: 30px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #151515;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 70, 85, 0.1);
+    }
+    
+    .btn-primary, .btn-secondary, .btn-danger {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background-color: var(--accent-color);
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background-color: #ff5a69;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 70, 85, 0.3);
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #555;
+        transform: translateY(-2px);
+    }
+    
+    .btn-danger {
+        background-color: #e74c3c;
+        color: #fff;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="cart-section">
-    <div class="container">
-        <h2>Tu Carrito de Compras</h2>
-        
-        {% if carrito.items.all %}
-            <div class="cart-items">
-                <div class="cart-header">
-                    <div class="cart-col">Producto</div>
-                    <div class="cart-col">Precio</div>
-                    <div class="cart-col">Cantidad</div>
-                    <div class="cart-col">Subtotal</div>
-                    <div class="cart-col">Acciones</div>
-                </div>
-                
-                {% for item in carrito.items.all %}
-                <div class="cart-item">
-                    <div class="cart-col product-info">
-                        <img src="{{ item.producto.imagen.url|default:'https://via.placeholder.com/80' }}" alt="{{ item.producto.nombre }}">
-                        <div>
-                            <h3>{{ item.producto.nombre }}</h3>
-                            <p>{{ item.descripcion|truncatechars:50 }}</p>
+<div class="main-content">
+    <section class="cart-section">
+        <div class="cart-container">
+            <h2>Tu Carrito de Compras</h2>
+            
+            {% if carrito.items.all %}
+                <div class="cart-items">
+                    <div class="cart-header">
+                        <div class="cart-col product-col">Producto</div>
+                        <div class="cart-col price-col">Precio</div>
+                        <div class="cart-col quantity-col">Cantidad</div>
+                        <div class="cart-col subtotal-col">Subtotal</div>
+                        <div class="cart-col action-col">Acciones</div>
+                    </div>
+                    
+                    {% for item in carrito.items.all %}
+                    <div class="cart-item">
+                        <div class="cart-col product-info">
+                            <img src="{{ item.producto.imagen.url|default:'https://via.placeholder.com/80' }}" alt="{{ item.producto.nombre }}">
+                            <div class="product-details">
+                                <h3>{{ item.producto.nombre }}</h3>
+                                <p>{{ item.producto.descripcion|truncatechars:50 }}</p>
+                            </div>
+                        </div>
+                        <div class="cart-col price-col">{{ item.precio }} €</div>
+                        <div class="cart-col quantity-col">
+                            <form method="post" action="{% url 'actualizar_cantidad' item.id %}" class="quantity-form">
+                                {% csrf_token %}
+                                <div class="quantity-controls">
+                                    <button type="button" class="quantity-btn minus">-</button>
+                                    <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" max="10">
+                                    <button type="button" class="quantity-btn plus">+</button>
+                                </div>
+                                <button type="submit" class="update-btn">Actualizar</button>
+                            </form>
+                        </div>
+                        <div class="cart-col subtotal-col">{{ item.subtotal }} €</div>
+                        <div class="cart-col action-col">
+                            <a href="{% url 'eliminar_del_carrito' item.id %}" class="remove-btn"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
-                    <div class="cart-col">{{ item.precio }} €</div>
-                    <div class="cart-col quantity">
-                        <form method="post" action="{% url 'actualizar_cantidad' item.id %}">
+                    {% endfor %}
+                </div>
+                
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Total:</span>
+                        <span class="cart-total">{{ carrito.total }} €</span>
+                    </div>
+                    <div class="cart-actions">
+                        <form method="post" action="{% url 'vaciar_carrito' %}" class="empty-cart-form">
                             {% csrf_token %}
-                            <button type="button" class="quantity-btn minus">-</button>
-                            <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" max="10">
-                            <button type="button" class="quantity-btn plus">+</button>
-                            <button type="submit" class="update-btn">Actualizar</button>
+                            <button type="submit" class="btn-danger">Vaciar Carrito</button>
                         </form>
-                    </div>
-                    <div class="cart-col">{{ item.subtotal }} €</div>
-                    <div class="cart-col">
-                        <a href="{% url 'eliminar_del_carrito' item.id %}" class="remove-btn"><i class="fas fa-trash"></i></a>
+                        <a href="{% url 'colecciones' %}" class="btn-secondary">Continuar Comprando</a>
+                        <a href="#" class="btn-primary">Finalizar Compra</a>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-            
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Total:</span>
-                    <span class="cart-total">{{ carrito.total }} €</span>
+            {% else %}
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart fa-4x"></i>
+                    <p>Tu carrito está vacío</p>
+                    <a href="{% url 'Home' %}" class="btn-primary">Continuar Comprando</a>
                 </div>
-                <div class="cart-actions">
-                    <form method="post" action="{% url 'vaciar_carrito' %}" class="empty-cart-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Vaciar Carrito</button>
-                    </form>
-                    <a href="#" class="btn">Continuar Comprando</a>
-                    <a href="#" class="btn">Finalizar Compra</a>
-                </div>
-            </div>
-        {% else %}
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart fa-4x"></i>
-                <p>Tu carrito está vacío</p>
-                <a href="{% url 'Home' %}" class="btn">Continuar Comprando</a>
-            </div>
-        {% endif %}
-    </div>
-</section>
+            {% endif %}
+        </div>
+    </section>
+</div>
 {% endblock %}
 
 {% block extra_js %}

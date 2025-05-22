@@ -1,25 +1,35 @@
 {% extends 'tiendapp/base.html' %}
+{% load static %}
+
 {% block title %}Categorías | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/categorias.css' %}">
+{% endblock %}
+
 {% block content %}
-<section class="categories">
+<section class="categories-section">
     <div class="container">
-        <h2>Categorías</h2>
+        <h2 class="section-title">Categorías</h2>
+        
         <div class="category-grid">
-    {% for categoria in categorias %}
-        <div class="category-card">
-            <a href="{% url 'productos_por_categoria' categoria.id %}">
-                {% if categoria.imagen %}
-                    <img src="{{ categoria.imagen.url }}" alt="{{ categoria.nombre }}" class="category-image">
-                {% else %}
-                    <img src="{% static 'images/product-placeholder.jpg' %}" alt="Sin imagen" class="category-image">
-                {% endif %}
-                <h3>{{ categoria.nombre }}</h3>
-            </a>
+            {% for categoria in categorias %}
+            <div class="category-card">
+                <a href="{% url 'productos_por_categoria' categoria.id %}" class="category-link">
+                    <div class="category-image">
+                        {% if categoria.imagen %}
+                            <img src="{{ categoria.imagen.url }}" alt="{{ categoria.nombre }}">
+                        {% else %}
+                            <img src="{% static 'images/product-placeholder.jpg' %}" alt="Sin imagen">
+                        {% endif %}
+                    </div>
+                    <h3 class="category-name">{{ categoria.nombre }}</h3>
+                </a>
+            </div>
+            {% empty %}
+            <p class="no-categories">No hay categorías disponibles.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>No hay categorías disponibles.</p>
-    {% endfor %}
-</div>
     </div>
 </section>
 {% endblock %}

@@ -19,8 +19,19 @@ def productos_por_categoria(request, categoria_id):
     return render(request, 'tiendapp/productos_categoria.html', {'categoria': categoria, 'productos': productos})
 
 def colecciones(request):
-    productos = Producto.objects.all()
-    return render(request, 'tiendapp/colecciones.html', {'productos': productos})
+    categorias = Categoria.objects.all()
+    categoria_seleccionada = request.GET.get('categoria')
+    
+    if categoria_seleccionada:
+        productos = Producto.objects.filter(categoria_id=categoria_seleccionada)
+    else:
+        productos = Producto.objects.all()
+    
+    return render(request, 'tiendapp/colecciones.html', {
+        'categorias': categorias,
+        'productos': productos,
+        'categoria_actual': int(categoria_seleccionada) if categoria_seleccionada else None
+    })
 
 
 

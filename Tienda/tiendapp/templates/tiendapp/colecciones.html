@@ -3,26 +3,61 @@
 
 {% block title %}Colecciones | {{ block.super }}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/colecciones.css' %}">
+{% endblock %}
+
 {% block content %}
-<section class="featured-products">
-    <div class="container">
-        <h2>Nuevos Tribalismos</h2>
-        
-        <div class="product-grid">
-    {% for producto in productos %}
-        <article class="product-card">
-            {% if producto.imagen %}
-                <div class="product-image" style="background-image: url('{{ producto.imagen.url }}')"></div>
-            {% else %}
-                <div class="product-image" style="background-image: url('{% static 'images/product-placeholder.jpg' %}')"></div>
-            {% endif %}
-            <h3>{{ producto.nombre }}</h3>
-            <p>${{ producto.precio }}</p>
-        </article>
-    {% empty %}
-        <p>No hay productos disponibles.</p>
-    {% endfor %}
+<div class="main-content">
+    <section class="colecciones">
+        <div class="colecciones-container">
+            <h2>Nuestras Colecciones</h2>
+            
+            <!-- Filtro de categorías -->
+            <div class="categorias-container">
+                <h3>Categorías</h3>
+                <div class="categorias-lista">
+                    <a href="?" class="categoria-boton {% if not categoria_actual %}activa{% endif %}">
+                        Todas
+                    </a>
+                    {% for categoria in categorias %}
+                    <a href="?categoria={{ categoria.id }}" 
+                       class="categoria-boton {% if categoria_actual == categoria.id %}activa{% endif %}">
+                        {{ categoria.nombre }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Lista de productos -->
+            <div class="product-grid">
+                {% for producto in productos %}
+                <article class="product-card">
+                    <div class="producto-enlace">
+                        <div class="product-image">
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% else %}
+                                <img src="{% static 'images/product-placeholder.jpg' %}" alt="Imagen no disponible">
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3>{{ producto.nombre }}</h3>
+                            <p class="product-price">${{ producto.precio|floatformat:0 }}</p>
+                            <p class="product-description">{{ producto.descripcion|truncatechars:100 }}</p>
+                            <div class="product-actions">
+                                <a href="{% url 'agregar_al_carrito' producto.id %}" class="add-to-cart-btn">
+                                    <i class="fas fa-shopping-cart"></i> Añadir al carrito
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <p class="no-products">No hay productos disponibles en esta categoría.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
 </div>
-    </div>
-</section>
 {% endblock %}
