@@ -45,8 +45,8 @@ class EditarPerfilUsuarioForm(forms.ModelForm):
         model = CustomUser
         fields = ("username", "email", "telefono", "direccion")
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Nombre de usuario'}),
-            'email': forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'Correo electrónico'}),
-            'telefono': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Teléfono'}),
-            'direccion': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Dirección'}),
+            "username": forms.TextInput(attrs={"class": "input-field", "placeholder": "Nombre de usuario"}),
+            "email": forms.EmailInput(attrs={"class": "input-field", "placeholder": "Correo electrónico"}),
+            "telefono": forms.TextInput(attrs={"class": "input-field", "placeholder": "Teléfono"}),
+            "direccion": forms.TextInput(attrs={"class": "input-field", "placeholder": "Dirección"}),
         }

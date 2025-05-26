@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class OverrideuserConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'overrideuser'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "overrideuser"

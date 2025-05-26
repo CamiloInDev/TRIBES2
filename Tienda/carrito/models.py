@@ -9,21 +9,21 @@ class Carrito(models.Model):
     actualizado = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Carrito de {self.usuario.username}'
+        return f"Carrito de {self.usuario.username}"
 
     @property
     def total(self):
         return sum(item.subtotal for item in self.items.all())
 
 class ItemCarrito(models.Model):
-    carrito = models.ForeignKey(Carrito, related_name='items', on_delete=models.CASCADE)
+    carrito = models.ForeignKey(Carrito, related_name="items", on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     descripcion = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return f'{self.cantidad} x {self.producto.nombre}'
+        return f"{self.cantidad} x {self.producto.nombre}"
 
     @property
     def subtotal(self):
