@@ -2,17 +2,16 @@
 
 from django.db import migrations, models
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('productos', '0001_initial'),
+        ("productos", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='categoria',
-            name='imagen',
-            field=models.ImageField(blank=True, null=True, upload_to='categorias/'),
+            model_name="categoria",
+            name="imagen",
+            field=models.ImageField(blank=True, null=True, upload_to="categorias/"),
         ),
     ]

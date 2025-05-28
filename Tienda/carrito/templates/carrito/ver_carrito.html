@@ -124,7 +124,7 @@
                         </div>
                         <div class="cart-col price-col">{{ item.precio }} €</div>
                         <div class="cart-col quantity-col">
-                            <form method="post" action="{% url 'actualizar_cantidad' item.id %}" class="quantity-form">
+                            <form method="post" action="{% url 'carrito:actualizar_cantidad' item.id %}" class="quantity-form">
                                 {% csrf_token %}
                                 <div class="quantity-controls">
                                     <button type="button" class="quantity-btn minus">-</button>
@@ -136,7 +136,7 @@
                         </div>
                         <div class="cart-col subtotal-col">{{ item.subtotal }} €</div>
                         <div class="cart-col action-col">
-                            <a href="{% url 'eliminar_del_carrito' item.id %}" class="remove-btn"><i class="fas fa-trash"></i></a>
+                            <a href="{% url 'carrito:eliminar_del_carrito' item.id %}" class="remove-btn"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
                     {% endfor %}
@@ -148,7 +148,7 @@
                         <span class="cart-total">{{ carrito.total }} €</span>
                     </div>
                     <div class="cart-actions">
-                        <form method="post" action="{% url 'vaciar_carrito' %}" class="empty-cart-form">
+                        <form method="post" action="{% url 'carrito:vaciar_carrito' %}" class="empty-cart-form">
                             {% csrf_token %}
                             <button type="submit" class="btn-danger">Vaciar Carrito</button>
                         </form>
@@ -171,10 +171,10 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Botones para aumentar/disminuir cantidad
+        // Botones para aumentar/disminuir cantidad (solo cambian el input)
         const minusBtns = document.querySelectorAll('.quantity-btn.minus');
         const plusBtns = document.querySelectorAll('.quantity-btn.plus');
-        
+
         minusBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 const input = this.parentNode.querySelector('input');
@@ -184,7 +184,7 @@
                 }
             });
         });
-        
+
         plusBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 const input = this.parentNode.querySelector('input');
@@ -192,6 +192,60 @@
                 if (value < 10) {
                     input.value = value + 1;
                 }
+            });
+        });
+
+        // AJAX para actualizar cantidad sin recargar
+        document.querySelectorAll('.update-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = btn.closest('form');
+                const cantidadInput = form.querySelector('input[name="cantidad"]');
+                const cantidad = cantidadInput.value;
+                const url = form.action;
+                const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+                let accion = null;
+                // Detectar si el cambio fue por los botones +/-
+                const lastActive = form.dataset.lastActive;
+                if (lastActive === 'plus') accion = 'incrementar';
+                else if (lastActive === 'minus') accion = 'decrementar';
+                else accion = 'set';
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: `cantidad=${cantidad}&accion=${accion}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cantidad !== undefined && data.subtotal !== undefined) {
+                        // Actualiza el subtotal del item
+                        const subtotalCol = form.closest('.cart-item').querySelector('.subtotal-col');
+                        if(subtotalCol) subtotalCol.textContent = data.subtotal + ' €';
+                    }
+                    if (data.total !== undefined) {
+                        // Actualiza el total del carrito si viene en la respuesta
+                        const totalSpan = document.querySelector('.cart-total');
+                        if(totalSpan) totalSpan.textContent = data.total + ' €';
+                    }
+                });
+            });
+        });
+
+        // Marcar si el último click fue +/- para enviar accion correcta
+        document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = btn.closest('form');
+                form.dataset.lastActive = 'minus';
+            });
+        });
+        document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = btn.closest('form');
+                form.dataset.lastActive = 'plus';
             });
         });
     });

@@ -46,7 +46,7 @@
                             <p class="product-price">${{ producto.precio|floatformat:0 }}</p>
                             <p class="product-description">{{ producto.descripcion|truncatechars:100 }}</p>
                             <div class="product-actions">
-                                <a href="{% url 'agregar_al_carrito' producto.id %}" class="add-to-cart-btn">
+                                <a href="{% url 'carrito:agregar_al_carrito' producto.id %}" class="add-to-cart-btn">
                                     <i class="fas fa-shopping-cart"></i> Añadir al carrito
                                 </a>
                             </div>

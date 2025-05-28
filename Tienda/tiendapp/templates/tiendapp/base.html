@@ -23,12 +23,12 @@
                 <a href="#hombre">Hombre</a>
                 <a href="#mujer">Mujer</a>
                 {% if user.is_authenticated %}
-                <a href="{% url 'ver_carrito' %}" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+                <a href="{% url 'carrito:ver_carrito' %}" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
     <div class="user-menu-container">
         <a href="#" id="user-menu-toggle">Hola, {{ user.username }} <i class="fas fa-caret-down"></i></a>
         <div id="user-menu" class="user-menu">
             <a href="{% url 'editar_perfil' %}"><i class="fas fa-user-edit"></i> Editar perfil</a>
-            <a href="{% url 'ver_carrito' %}"><i class="fas fa-shopping-cart"></i> Ver carrito</a>
+            <a href="{% url 'carrito:ver_carrito' %}"><i class="fas fa-shopping-cart"></i> Ver carrito</a>
             <a href="{% url 'cerrar_sesion' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
         </div>
     </div>
