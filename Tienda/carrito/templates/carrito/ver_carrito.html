@@ -94,6 +94,66 @@
         background-color: #c0392b;
         transform: translateY(-2px);
     }
+
+    /* Estilos adicionales para feedback visual */
+    .updating {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .quantity-btn {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    
+    .quantity-btn:hover {
+        background: #ff5a69;
+        transform: scale(1.1);
+    }
+    
+    .quantity-btn:disabled {
+        background: #666;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Ocultar las flechitas nativas del input number */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    /* Para Firefox */
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    
+    /* Estilos adicionales para el input de cantidad */
+    input[name="cantidad"] {
+        width: 60px;
+        text-align: center;
+        padding: 5px;
+        border: 1px solid #444;
+        background: #222;
+        color: #fff;
+        border-radius: 4px;
+    }
 </style>
 {% endblock %}
 
@@ -114,7 +174,7 @@
                     </div>
                     
                     {% for item in carrito.items.all %}
-                    <div class="cart-item">
+                    <div class="cart-item" data-item-id="{{ item.id }}">
                         <div class="cart-col product-info">
                             <img src="{{ item.producto.imagen.url|default:'https://via.placeholder.com/80' }}" alt="{{ item.producto.nombre }}">
                             <div class="product-details">
@@ -127,11 +187,11 @@
                             <form method="post" action="{% url 'carrito:actualizar_cantidad' item.id %}" class="quantity-form">
                                 {% csrf_token %}
                                 <div class="quantity-controls">
-                                    <button type="button" class="quantity-btn minus">-</button>
+                                    <button type="button" class="quantity-btn minus" data-action="decrementar">-</button>
                                     <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" max="10">
-                                    <button type="button" class="quantity-btn plus">+</button>
+                                    <button type="button" class="quantity-btn plus" data-action="incrementar">+</button>
                                 </div>
-                                <button type="submit" class="update-btn">Actualizar</button>
+                                <button type="submit" class="update-btn" style="display: none;">Actualizar</button>
                             </form>
                         </div>
                         <div class="cart-col subtotal-col">{{ item.subtotal }} €</div>
@@ -171,81 +231,96 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Botones para aumentar/disminuir cantidad (solo cambian el input)
-        const minusBtns = document.querySelectorAll('.quantity-btn.minus');
-        const plusBtns = document.querySelectorAll('.quantity-btn.plus');
+        // Función para actualizar cantidad con AJAX
+        function actualizarCantidad(form, nuevaCantidad, accion) {
+            const cartItem = form.closest('.cart-item');
+            const cantidadInput = form.querySelector('input[name="cantidad"]');
+            const url = form.action;
+            const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            // Añadir feedback visual
+            cartItem.classList.add('updating');
+            
+            // Deshabilitar botones temporalmente
+            const buttons = cartItem.querySelectorAll('.quantity-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: `cantidad=${nuevaCantidad}&accion=${accion}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.cantidad !== undefined && data.subtotal !== undefined) {
+                    // Actualizar el input con la cantidad confirmada del servidor
+                    cantidadInput.value = data.cantidad;
+                    
+                    // Actualizar el subtotal del item
+                    const subtotalCol = cartItem.querySelector('.subtotal-col');
+                    if(subtotalCol) subtotalCol.textContent = data.subtotal + ' €';
+                }
+                if (data.total !== undefined) {
+                    // Actualizar el total del carrito
+                    const totalSpan = document.querySelector('.cart-total');
+                    if(totalSpan) totalSpan.textContent = data.total + ' €';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // En caso de error, recargar la página
+                location.reload();
+            })
+            .finally(() => {
+                cartItem.classList.remove('updating');
+                buttons.forEach(btn => btn.disabled = false);
+            });
+        }
 
-        minusBtns.forEach(btn => {
+        // Event listeners para botones + y -
+        document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
             btn.addEventListener('click', function() {
-                const input = this.parentNode.querySelector('input');
-                const value = parseInt(input.value);
-                if (value > 1) {
-                    input.value = value - 1;
+                const form = this.closest('form');
+                const input = form.querySelector('input[name="cantidad"]');
+                const currentValue = parseInt(input.value);
+                
+                if (currentValue > 1) {
+                    const nuevaCantidad = currentValue - 1;
+                    input.value = nuevaCantidad; // Actualizar visualmente
+                    actualizarCantidad(form, nuevaCantidad, 'decrementar');
                 }
             });
         });
 
-        plusBtns.forEach(btn => {
+        document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
             btn.addEventListener('click', function() {
-                const input = this.parentNode.querySelector('input');
-                const value = parseInt(input.value);
-                if (value < 10) {
-                    input.value = value + 1;
+                const form = this.closest('form');
+                const input = form.querySelector('input[name="cantidad"]');
+                const currentValue = parseInt(input.value);
+                
+                if (currentValue < 10) {
+                    const nuevaCantidad = currentValue + 1;
+                    input.value = nuevaCantidad; // Actualizar visualmente
+                    actualizarCantidad(form, nuevaCantidad, 'incrementar');
                 }
             });
         });
 
-        // AJAX para actualizar cantidad sin recargar
+        // Event listener para el botón actualizar (si alguien cambia manualmente el input)
         document.querySelectorAll('.update-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 const form = btn.closest('form');
                 const cantidadInput = form.querySelector('input[name="cantidad"]');
-                const cantidad = cantidadInput.value;
-                const url = form.action;
-                const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
-                let accion = null;
-                // Detectar si el cambio fue por los botones +/-
-                const lastActive = form.dataset.lastActive;
-                if (lastActive === 'plus') accion = 'incrementar';
-                else if (lastActive === 'minus') accion = 'decrementar';
-                else accion = 'set';
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: `cantidad=${cantidad}&accion=${accion}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.cantidad !== undefined && data.subtotal !== undefined) {
-                        // Actualiza el subtotal del item
-                        const subtotalCol = form.closest('.cart-item').querySelector('.subtotal-col');
-                        if(subtotalCol) subtotalCol.textContent = data.subtotal + ' €';
-                    }
-                    if (data.total !== undefined) {
-                        // Actualiza el total del carrito si viene en la respuesta
-                        const totalSpan = document.querySelector('.cart-total');
-                        if(totalSpan) totalSpan.textContent = data.total + ' €';
-                    }
-                });
-            });
-        });
-
-        // Marcar si el último click fue +/- para enviar accion correcta
-        document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const form = btn.closest('form');
-                form.dataset.lastActive = 'minus';
-            });
-        });
-        document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const form = btn.closest('form');
-                form.dataset.lastActive = 'plus';
+                const cantidad = parseInt(cantidadInput.value);
+                
+                if (cantidad >= 1 && cantidad <= 10) {
+                    actualizarCantidad(form, cantidad, 'set');
+                }
             });
         });
     });
