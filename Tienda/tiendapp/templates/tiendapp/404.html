@@ -1,0 +1,35 @@
+{% extends 'tiendapp/base.html' %}
+
+{% block title %}Página no encontrada (404) - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-1 text-danger">404</h1>
+            <h2 class="mb-4">¡Ups! Página no encontrada</h2>
+            
+            <div class="alert alert-info text-start mb-4">
+                <p class="mb-1"><strong>Ruta solicitada:</strong> {{ request.path }}</p>
+                {% if exception %}
+                <p class="mb-0"><strong>Error:</strong> {{ exception }}</p>
+                {% endif %}
+            </div>
+            
+            <p class="lead">Lo sentimos, la página que estás buscando no existe o ha sido movida.</p>
+            
+            <div class="mt-4">
+                <a href="/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home me-2"></i>Volver al inicio
+                </a>
+                <a href="/productos/" class="btn btn-outline-primary btn-lg ms-2">
+                    <i class="fas fa-shopping-bag me-2"></i>Ver productos
+                </a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg ms-2">
+                    <i class="fas fa-arrow-left me-2"></i>Volver atrás
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

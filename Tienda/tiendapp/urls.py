@@ -18,6 +18,8 @@ urlpatterns = [
         views.productos_por_categoria,
         name="productos_por_categoria",
     ),
+    # Ruta de prueba para el error 404 (solo para desarrollo)
+    path('test-404/', views.test_404, name='test_404'),
 ]
 
 

@@ -19,12 +19,36 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import TemplateView
+from django.views.defaults import page_not_found
+
+# Importar la vista personalizada de error 404
+from tiendapp.views import custom_404
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("tiendapp.urls")),
-    path("usuarios/", include("overrideuser.urls")),
+    path('admin/', admin.site.urls),  # Admin estándar de Django
+    path('', include('tiendapp.urls')),  # Incluye las URLs de tiendapp
+    path('usuarios/', include('django.contrib.auth.urls')),  # URLs de autenticación
+    path('usuarios/', include('overrideuser.urls')),  # URLs personalizadas de usuarios
     path("carrito/", include("carrito.urls")),
     path("productos/", include("productos.urls")),
-    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
-]
+    # Ruta de prueba para 404
+    path('test-404/', custom_404, name='test_404'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Configurar el manejador de errores 404
+handler404 = 'tiendapp.views.custom_404'
+
+# En modo DEBUG, forzar el uso de la vista personalizada
+if settings.DEBUG:
+    # Captura todas las URLs no encontradas y usa la vista personalizada
+    urlpatterns += [
+        path('<path:undefined_path>/', custom_404, name='catch_all'),
+    ]
+    
+    # Configurar para que use nuestra vista personalizada
+    def page_not_found(request, exception, template_name='tiendapp/404.html'):
+        return custom_404(request, exception)
+        
+    # Sobrescribir el manejador de errores
+    handler404 = page_not_found

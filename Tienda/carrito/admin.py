@@ -1,30 +1,16 @@
-"""Configuración de la administración para el carrito de compras."""
-from typing import ClassVar
-
 from django.contrib import admin
-
 from .models import Carrito, ItemCarrito
-
-
-class ItemCarritoInline(admin.TabularInline):
-    """Configuración inline para los ítems del carrito en el admin."""
-
-    model: ClassVar[ItemCarrito] = ItemCarrito
-    extra: ClassVar[int] = 0
 
 @admin.register(Carrito)
 class CarritoAdmin(admin.ModelAdmin):
-    """Configuración del modelo Carrito en el admin."""
-
-    list_display: ClassVar[tuple[str, ...]] = (
-        "usuario", "creado", "actualizado", "total",
-    )
-    inlines: ClassVar[list] = [ItemCarritoInline]
+    list_display = ('usuario', 'creado', 'actualizado')
+    list_filter = ('creado', 'actualizado')
+    search_fields = ('usuario__username',)
+    date_hierarchy = 'creado'  # Agrega una jerarquía de fechas para mejor navegación
+    readonly_fields = ('creado', 'actualizado')  # Hacemos estos campos de solo lectura
 
 @admin.register(ItemCarrito)
 class ItemCarritoAdmin(admin.ModelAdmin):
-    """Configuración del modelo ItemCarrito en el admin."""
-
-    list_display: ClassVar[tuple[str, ...]] = (
-        "carrito", "producto", "cantidad", "precio", "subtotal",
-    )
+    list_display = ('carrito', 'producto', 'cantidad', 'precio')
+    list_filter = ('carrito', 'producto')
+    search_fields = ('carrito__usuario__username', 'producto__nombre')

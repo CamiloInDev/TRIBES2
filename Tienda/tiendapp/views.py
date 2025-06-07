@@ -1,8 +1,42 @@
 """Vistas para la aplicación principal de la tienda."""
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render
+from django.template import RequestContext
 from productos.models import Categoria, Producto
+
+
+from django.shortcuts import render
+from django.views.decorators.csrf import requires_csrf_token
+from django.template import loader
+from django.http import HttpResponseNotFound
+
+@requires_csrf_token
+def custom_404(request, exception=None, template_name='tiendapp/404.html', **kwargs):
+    """Vista personalizada para el error 404."""
+    # Ignorar cualquier parámetro adicional que pueda venir de la URL
+    # Crear contexto con información útil
+    context = {
+        'request': request,
+        'exception': str(exception) if exception else "",
+        'path': request.path,
+        'status_code': 404
+    }
+    
+    # Cargar la plantilla manualmente para asegurar que se encuentre
+    template = loader.get_template(template_name)
+    body = template.render(context, request)
+    
+    # Devolver la respuesta con el código de estado 404
+    return HttpResponseNotFound(body)
+
+
+def test_404(request):
+    """Vista de prueba para el error 404."""
+    from django.http import Http404
+    if request.GET.get('force'):
+        raise Http404("Página de prueba 404")
+    return custom_404(request)
 
 
 def home(request: HttpRequest) -> HttpResponse:
