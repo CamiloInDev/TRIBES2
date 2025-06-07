@@ -35,10 +35,9 @@ def registro_automatico():
         boton_registro = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         boton_registro.click()
         
-        time.sleep(5)
+        time.sleep(40)
         
     finally:
-        input("Presiona Enter para cerrar el navegador...")
         driver.quit()
 
 if __name__ == "__main__":
